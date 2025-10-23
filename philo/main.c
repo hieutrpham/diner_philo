@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-#define THREAD_COUNT 3
+#define THREAD_COUNT 40
 
 int get_time()
 {
@@ -27,15 +27,17 @@ void *routine(void *arg)
 {
 	t_philo *philo = (t_philo *)arg;
 
-	printf("thread %d pick up left fork\n", philo->id);
+	if (philo->id % 2 == 0)
+		usleep(1000);
 	pthread_mutex_lock(philo->lf);
-	printf("thread %d pick up right fork\n", philo->id);
+	printf("thread %d picked up left fork\n", philo->id);
 	pthread_mutex_lock(philo->rf);
+	printf("thread %d picked up right fork\n", philo->id);
 	printf("thread %d is eating\n", philo->id);
 	usleep(500);
 	printf("thread %d release both forks\n", philo->id);
-	pthread_mutex_unlock(philo->lf);
 	pthread_mutex_unlock(philo->rf);
+	pthread_mutex_unlock(philo->lf);
 	printf("thread %d is thinking\n", philo->id);
 	usleep(500);
 	printf("thread %d is sleeping\n", philo->id);
@@ -54,18 +56,15 @@ int main(void)
 	for (int i = 0; i < THREAD_COUNT; i++)
 	{
 		philos[i].id = i + 1;
-		if (i == THREAD_COUNT - 1)
+		if (philos[i].id == THREAD_COUNT)
 			philos[i].lf = &forks[0];
 		else
 			philos[i].lf = &forks[philos[i].id];
-		if (i == 0)
-		{
-			philos[i].rf = &forks[i];
-			philos[i].lf = &forks[philos[i].id];
-		}
+		if (philos[i].id == 1)
+			philos[i].rf = &forks[0];
 		else
 			philos[i].rf = &forks[philos[i].id - 1];
-		printf("philo %d lf: %p rf: %p\n", philos[i].id, philos[i].lf, philos[i].rf);
+		// printf("philo %d lf: %p rf: %p\n", philos[i].id, philos[i].lf, philos[i].rf);
 	}
 
 	// create threads as philos
