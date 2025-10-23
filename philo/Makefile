@@ -1,6 +1,6 @@
 CC = cc
 NAME = philo
-CFLAGS = -Wall -Werror -Wextra -pthread -ggdb
+CFLAGS = -Wall -Werror -Wextra -pthread
 SRC = main.c
 OBJ = $(SRC:.c=.o)
 
@@ -19,3 +19,6 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+
+debug:
+	$(MAKE) CFLAGS="$(CFLAGS) -g" all

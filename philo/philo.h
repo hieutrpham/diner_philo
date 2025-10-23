@@ -24,9 +24,12 @@ typedef struct s_philo
 	pthread_t thread;
 	pthread_mutex_t *lf;
 	pthread_mutex_t *rf;
+	pthread_mutex_t *print_mt;
 } t_philo;
 
 typedef struct s_sim
 {
+	pthread_mutex_t print_lock;
+	pthread_mutex_t dead_lock;
 	t_philo *philos;
 } t_sim;
