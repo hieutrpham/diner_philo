@@ -17,18 +17,26 @@
 #include <string.h>
 #include <pthread.h>
 #include <sys/time.h>
+#include <stdbool.h>
 
 typedef struct s_philo
 {
-	uint id;
+	int id;
 	pthread_t thread;
+	size_t start_time;
+	size_t last_eat_time;
+	size_t meal_eaten;
+	_Atomic bool *dead;
 	pthread_mutex_t *lf;
 	pthread_mutex_t *rf;
-	pthread_mutex_t *print_mt;
+	pthread_mutex_t *print_lock;
+	pthread_mutex_t *dead_lock;
+	pthread_mutex_t *meal_lock;
 } t_philo;
 
 typedef struct s_sim
 {
+	pthread_mutex_t meal_lock;
 	pthread_mutex_t print_lock;
 	pthread_mutex_t dead_lock;
 	t_philo *philos;
