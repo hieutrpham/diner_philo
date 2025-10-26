@@ -1,6 +1,6 @@
 CC = cc
 NAME = philo
-CFLAGS = -Wall -Werror -Wextra -pthread
+CFLAGS = -Wall -Werror -Wextra -pthread -g
 SRC = main.c
 OBJ = $(SRC:.c=.o)
 

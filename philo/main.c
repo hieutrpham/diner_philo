@@ -34,11 +34,12 @@ size_t get_time()
 
 bool is_dead(t_philo *philo)
 {
+	size_t time = get_time();
 	pthread_mutex_lock(philo->dead_lock);
-	if (get_time() - philo->start_time >= DIE
-		|| get_time() - philo->last_eat_time >= DIE)
+	if (time - philo->start_time >= DIE
+		|| time - philo->last_eat_time >= DIE)
 	{
-		*philo->dead = true;
+		*(philo->status) = DEAD;
 		pthread_mutex_unlock(philo->dead_lock);
 		return true;
 	}
@@ -52,7 +53,7 @@ void print_mes(char *mes, t_philo *philo)
 
 	time = get_time() - philo->start_time;
 	pthread_mutex_lock(philo->print_lock);
-	if (!is_dead(philo))
+	if (*philo->status != DEAD)
 		printf("%zu %d %s\n", time, philo->id, mes);
 	pthread_mutex_unlock(philo->print_lock);
 }
@@ -88,7 +89,9 @@ void *philo_routine(void *arg)
 {
 	t_philo *philo = (t_philo *)arg;
 
-	while (!is_dead(philo) || !philo->dead)
+	if (philo->id % 2 == 0)
+		usleep(500);
+	while (*philo->status != DEAD)
 	{
 		eat(philo);
 		sleeps(philo);
@@ -104,10 +107,10 @@ int has_dead_philo(t_philo *philos)
 	while (i < THREAD_COUNT)
 	{
 		if (is_dead(&philos[i]))
-			return philos[i].id;
+			return i;
 		i++;
 	}
-	return false;
+	return -1;
 }
 
 void *monitor_routine(void *arg)
@@ -117,9 +120,11 @@ void *monitor_routine(void *arg)
 	while (true)
 	{
 		int dead = has_dead_philo(philos);
-		if (dead)
+		if (dead >= 0)
 		{
+			pthread_mutex_lock(philos->print_lock);
 			printf("%d died\n", dead);
+			pthread_mutex_unlock(philos->print_lock);
 			break;
 		}
 	}
@@ -134,10 +139,7 @@ int main(void)
 	pthread_mutex_t dead_lock;
 	pthread_mutex_t meal_lock;
 	pthread_t monitor;
-	_Atomic bool dead = false;
-
-	if (pthread_create(&monitor, NULL, monitor_routine, philos) != 0)
-		return write(2, "thread created error: %s\n", 26);
+	_Atomic t_status status = ALIVE;
 
 	pthread_mutex_init(&print_lock, NULL);
 	pthread_mutex_init(&dead_lock, NULL);
@@ -153,7 +155,7 @@ int main(void)
 		philos[i].dead_lock = &dead_lock;
 		philos[i].meal_lock = &meal_lock;
 		philos[i].meal_eaten = 0;
-		philos[i].dead = &dead;
+		philos[i].status = &status;
 
 		//rf = (id + 1) % philo_count
 		philos[i].id = i + 1;
@@ -166,6 +168,9 @@ int main(void)
 		else
 			philos[i].rf = &forks[philos[i].id - 1];
 	}
+
+	if (pthread_create(&monitor, NULL, monitor_routine, philos) != 0)
+		return write(2, "thread created error: %s\n", 26);
 
 	// create threads as philos
 	for (int i = 0; i < THREAD_COUNT; i++)
