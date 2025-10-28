@@ -6,12 +6,14 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 11:14:13 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/28 14:19:35 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/28 17:27:56 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <pthread.h>
 
+// BUG: need to handle for 0 and 1 philo edge case
 
 size_t get_time()
 {
@@ -34,15 +36,13 @@ int	ft_usleep(size_t ms)
 
 bool is_dead(t_philo *philo)
 {
-	pthread_mutex_lock(philo->dead_lock);
-	size_t time = get_time();
-	if(time - philo->start_time > philo->time_to_die
-		|| time - philo->last_eat_time > philo->time_to_die)
+	pthread_mutex_lock(philo->meal_lock);
+	if(get_time() - philo->last_eat_time > philo->time_to_die)
 	{
-		pthread_mutex_unlock(philo->dead_lock);
+		pthread_mutex_unlock(philo->meal_lock);
 		return true;
 	}
-	pthread_mutex_unlock(philo->dead_lock);
+	pthread_mutex_unlock(philo->meal_lock);
 	return false;
 }
 
@@ -139,7 +139,7 @@ void *monitor_routine(void *arg)
 	while (true)
 	{
 		int dead = has_dead_philo(philos);
-		if (dead >= 0 || philos[0].num_philos <= 1)
+		if (dead >= 0)
 		{
 			pthread_mutex_lock((&philos[0])->print_lock);
 			*(&philos[0])->status = DEAD;
@@ -148,7 +148,12 @@ void *monitor_routine(void *arg)
 			break;
 		}
 		if (philos[0].req_meal && all_eaten(philos))
+		{
+			pthread_mutex_lock((&philos[0])->dead_lock);
+			*(&philos[0])->status = DEAD;
+			pthread_mutex_unlock((&philos[0])->dead_lock);
 			break;
+		}
 	}
 	return NULL;
 }
@@ -174,13 +179,13 @@ int main(int ac, char **av)
 	for (int i = 0; i < ft_atoi(av[1]); i++)
 	{
 		philos[i].start_time = start_time;
+		philos[i].last_eat_time = start_time;
 		philos[i].num_philos = ft_atoi(av[1]);
 		philos[i].time_to_die = ft_atoi(av[2]);
 		philos[i].time_to_eat = ft_atoi(av[3]);
 		philos[i].time_to_sleep = ft_atoi(av[4]);
 		if (av[5])
 			philos[i].req_meal = ft_atoi(av[5]);
-		philos[i].last_eat_time = start_time;
 		philos[i].print_lock = &print_lock;
 		philos[i].dead_lock = &dead_lock;
 		philos[i].meal_lock = &meal_lock;

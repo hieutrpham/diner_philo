@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 10:35:33 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/28 14:51:07 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/28 17:35:22 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,11 @@ bool check_arg(int ac, char **av)
 			j++;
 		}
 		i++;
+	}
+	if (ft_atoi(av[1]) == 0)
+	{
+		write(2, "No philo no fork\n", 18);
+		return false;
 	}
 	return true;
 }
