@@ -10,6 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef PHILO_H
+#define PHILO_H
+
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
@@ -48,3 +51,5 @@ typedef struct s_sim
 	_Atomic t_status status;
 	t_philo *philos;
 } t_sim;
+
+#endif // PHILO_H

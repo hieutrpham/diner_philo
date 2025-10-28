@@ -11,17 +11,14 @@
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <pthread.h>
-#include <stddef.h>
-#include <string.h>
 
 #ifndef THREAD_COUNT
-#define THREAD_COUNT 10
+#define THREAD_COUNT 3
 #endif // THREAD_COUNT
 
-#define SLEEP 500
-#define DIE 100
+#define DIE 300
 #define EAT 500
+#define SLEEP 500
 
 size_t get_time()
 {
@@ -32,14 +29,23 @@ size_t get_time()
 	return tv.tv_sec*1000 + tv.tv_usec/1000;
 }
 
+int	ft_usleep(size_t ms)
+{
+	size_t	start;
+
+	start = get_time();
+	while ((get_time() - start) < ms)
+		usleep(100);
+	return (0);
+}
+
 bool is_dead(t_philo *philo)
 {
-	size_t time = get_time();
 	pthread_mutex_lock(philo->dead_lock);
-	if (time - philo->start_time >= DIE
-		|| time - philo->last_eat_time >= DIE)
+	size_t time = get_time();
+	if (time - philo->start_time > DIE
+		|| time - philo->last_eat_time > DIE)
 	{
-		*(philo->status) = DEAD;
 		pthread_mutex_unlock(philo->dead_lock);
 		return true;
 	}
@@ -51,8 +57,8 @@ void print_mes(char *mes, t_philo *philo)
 {
 	size_t time;
 
-	time = get_time() - philo->start_time;
 	pthread_mutex_lock(philo->print_lock);
+	time = get_time() - philo->start_time;
 	if (*philo->status != DEAD)
 		printf("%zu %d %s\n", time, philo->id, mes);
 	pthread_mutex_unlock(philo->print_lock);
@@ -64,14 +70,14 @@ void eat(t_philo *philo)
 	print_mes("has taken a fork", philo);
 	pthread_mutex_lock(philo->rf);
 	print_mes("has taken a fork", philo);
-	pthread_mutex_lock(philo->meal_lock);
 	print_mes("is eating", philo);
+	pthread_mutex_lock(philo->meal_lock);
 	philo->last_eat_time = get_time();
 	philo->meal_eaten += 1;
 	pthread_mutex_unlock(philo->meal_lock);
-	usleep(EAT);
-	pthread_mutex_unlock(philo->rf);
+	ft_usleep(EAT);
 	pthread_mutex_unlock(philo->lf);
+	pthread_mutex_unlock(philo->rf);
 }
 
 void think(t_philo *philo)
@@ -82,7 +88,7 @@ void think(t_philo *philo)
 void sleeps(t_philo *philo)
 {
 	print_mes("is sleeping", philo);
-	usleep(SLEEP);
+	ft_usleep(SLEEP);
 }
 
 void *philo_routine(void *arg)
@@ -90,7 +96,7 @@ void *philo_routine(void *arg)
 	t_philo *philo = (t_philo *)arg;
 
 	if (philo->id % 2 == 0)
-		usleep(500);
+		ft_usleep(1);
 	while (*philo->status != DEAD)
 	{
 		eat(philo);
@@ -122,9 +128,10 @@ void *monitor_routine(void *arg)
 		int dead = has_dead_philo(philos);
 		if (dead >= 0)
 		{
-			pthread_mutex_lock(philos->print_lock);
-			printf("%d died\n", dead);
-			pthread_mutex_unlock(philos->print_lock);
+			pthread_mutex_lock((&philos[0])->print_lock);
+			*(&philos[0])->status = DEAD;
+			printf("%zu %d died\n", get_time() - (&philos[0])->start_time, dead + 1);
+			pthread_mutex_unlock((&philos[0])->print_lock);
 			break;
 		}
 	}
