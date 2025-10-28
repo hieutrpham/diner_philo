@@ -6,19 +6,12 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 11:14:13 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/22 12:30:03 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/28 14:19:35 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-#ifndef THREAD_COUNT
-#define THREAD_COUNT 3
-#endif // THREAD_COUNT
-
-#define DIE 300
-#define EAT 500
-#define SLEEP 500
 
 size_t get_time()
 {
@@ -43,8 +36,8 @@ bool is_dead(t_philo *philo)
 {
 	pthread_mutex_lock(philo->dead_lock);
 	size_t time = get_time();
-	if (time - philo->start_time > DIE
-		|| time - philo->last_eat_time > DIE)
+	if(time - philo->start_time > philo->time_to_die
+		|| time - philo->last_eat_time > philo->time_to_die)
 	{
 		pthread_mutex_unlock(philo->dead_lock);
 		return true;
@@ -75,7 +68,7 @@ void eat(t_philo *philo)
 	philo->last_eat_time = get_time();
 	philo->meal_eaten += 1;
 	pthread_mutex_unlock(philo->meal_lock);
-	ft_usleep(EAT);
+	ft_usleep(philo->time_to_eat);
 	pthread_mutex_unlock(philo->lf);
 	pthread_mutex_unlock(philo->rf);
 }
@@ -88,7 +81,7 @@ void think(t_philo *philo)
 void sleeps(t_philo *philo)
 {
 	print_mes("is sleeping", philo);
-	ft_usleep(SLEEP);
+	ft_usleep(philo->time_to_sleep);
 }
 
 void *philo_routine(void *arg)
@@ -108,15 +101,35 @@ void *philo_routine(void *arg)
 
 int has_dead_philo(t_philo *philos)
 {
-	int i = 0;
+	size_t i = 0;
 
-	while (i < THREAD_COUNT)
+	while (i < philos[0].num_philos)
 	{
 		if (is_dead(&philos[i]))
 			return i;
 		i++;
 	}
 	return -1;
+}
+
+bool all_eaten(t_philo *philos)
+{
+	size_t i;
+	size_t num_philos;
+
+	i = 0;
+	num_philos = 0;
+	while (i < philos[0].num_philos)
+	{
+		pthread_mutex_lock((&philos[0])->meal_lock);
+		if (philos[i].meal_eaten >= philos[i].req_meal)
+			num_philos++;
+		pthread_mutex_unlock((&philos[0])->meal_lock);
+		i++;
+	}
+	if (num_philos == (&philos[0])->num_philos)
+		return true;
+	return false;
 }
 
 void *monitor_routine(void *arg)
@@ -126,7 +139,7 @@ void *monitor_routine(void *arg)
 	while (true)
 	{
 		int dead = has_dead_philo(philos);
-		if (dead >= 0)
+		if (dead >= 0 || philos[0].num_philos <= 1)
 		{
 			pthread_mutex_lock((&philos[0])->print_lock);
 			*(&philos[0])->status = DEAD;
@@ -134,14 +147,18 @@ void *monitor_routine(void *arg)
 			pthread_mutex_unlock((&philos[0])->print_lock);
 			break;
 		}
+		if (philos[0].req_meal && all_eaten(philos))
+			break;
 	}
 	return NULL;
 }
 
-int main(void)
+int main(int ac, char **av)
 {
-	t_philo philos[THREAD_COUNT] = {0};
-	pthread_mutex_t forks[THREAD_COUNT] = {0};
+	if (!check_arg(ac, av))
+		return 1;
+	t_philo philos[MAX_THREAD] = {0};
+	pthread_mutex_t forks[MAX_THREAD] = {0};
 	pthread_mutex_t print_lock;
 	pthread_mutex_t dead_lock;
 	pthread_mutex_t meal_lock;
@@ -154,9 +171,15 @@ int main(void)
 	size_t start_time = get_time();
 
 	// initialize the philos
-	for (int i = 0; i < THREAD_COUNT; i++)
+	for (int i = 0; i < ft_atoi(av[1]); i++)
 	{
 		philos[i].start_time = start_time;
+		philos[i].num_philos = ft_atoi(av[1]);
+		philos[i].time_to_die = ft_atoi(av[2]);
+		philos[i].time_to_eat = ft_atoi(av[3]);
+		philos[i].time_to_sleep = ft_atoi(av[4]);
+		if (av[5])
+			philos[i].req_meal = ft_atoi(av[5]);
 		philos[i].last_eat_time = start_time;
 		philos[i].print_lock = &print_lock;
 		philos[i].dead_lock = &dead_lock;
@@ -166,7 +189,7 @@ int main(void)
 
 		//rf = (id + 1) % philo_count
 		philos[i].id = i + 1;
-		if (philos[i].id == THREAD_COUNT)
+		if (philos[i].id == ft_atoi(av[1]))
 			philos[i].lf = &forks[0];
 		else
 			philos[i].lf = &forks[philos[i].id];
@@ -180,14 +203,14 @@ int main(void)
 		return write(2, "thread created error: %s\n", 26);
 
 	// create threads as philos
-	for (int i = 0; i < THREAD_COUNT; i++)
+	for (int i = 0; i < ft_atoi(av[1]); i++)
 	{
 		if (pthread_create(&philos[i].thread, NULL, philo_routine, &philos[i]) != 0)
 			return write(2, "thread created error: %s\n", 26);
 	}
 	
 	//join all philos
-	for (int i = 0; i < THREAD_COUNT; i++)
+	for (int i = 0; i < ft_atoi(av[1]); i++)
 	{
 		if (pthread_join(philos[i].thread, NULL) != 0)
 			return write(2, "thread created error: %s\n", 26);
