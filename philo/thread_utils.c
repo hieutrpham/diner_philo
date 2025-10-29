@@ -41,4 +41,3 @@ void	print_mes(char *mes, t_philo *philo)
 		printf("%zu %d %s\n", time, philo->id, mes);
 	pthread_mutex_unlock(philo->print_lock);
 }
-

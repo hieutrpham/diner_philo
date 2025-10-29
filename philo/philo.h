@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 11:13:39 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/29 14:39:39 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/29 16:17:04 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,4 +66,8 @@ size_t	get_time(void);
 int	ft_usleep(size_t ms);
 void	print_mes(char *mes, t_philo *philo);
 void	*philo_routine(void *arg);
+void init_sim(t_sim *sim, t_philo *philos);
+void init_philos(char **av, t_sim *sim, pthread_mutex_t *forks);
+void thread_create(t_sim *sim, char **av, pthread_t *monitor);
+void thread_join(t_sim *sim, char **av, pthread_t monitor);
 #endif // PHILO_H

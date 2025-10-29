@@ -6,7 +6,7 @@
 /*   By: trupham <trupham@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 10:35:33 by trupham           #+#    #+#             */
-/*   Updated: 2025/10/28 17:35:22 by trupham          ###   ########.fr       */
+/*   Updated: 2025/10/29 15:25:05 by trupham          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,18 @@ static bool	check_digit(char **av)
 
 bool	check_arg(int ac, char **av)
 {
-	if (ac < 2 || ac > 6 || ac < 5)
+	if (ac != 6 && ac != 5)
 		return (usage());
 	if (!check_digit(av))
 		return (false);
 	if (ft_atoi(av[1]) == 0)
 	{
 		write(2, "No philo no fork\n", 18);
+		return (false);
+	}
+	if (ft_atoi(av[1]) > MAX_THREAD)
+	{
+		write(2, "Exceeded max threads\n", 22);
 		return (false);
 	}
 	return (true);
