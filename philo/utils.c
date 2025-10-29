@@ -37,7 +37,7 @@ int	ft_atoi(const char *nptr)
 	i = 0;
 	sign = 1;
 	if (!nptr)
-		return -1;
+		return (-1);
 	while (isspace(nptr[i]))
 		i++;
 	if (nptr[i] == '+')
@@ -55,12 +55,12 @@ int	ft_atoi(const char *nptr)
 	return (atoi * sign);
 }
 
-size_t ft_strlen(const char *s)
+size_t	ft_strlen(const char *s)
 {
-	size_t len;
+	size_t	len;
 
 	len = 0;
 	while (*s++)
 		len++;
-	return len;
+	return (len);
 }
