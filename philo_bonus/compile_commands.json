@@ -1,0 +1,178 @@
+[
+ {
+  "directory": "/home/trupham/hive/philo/philo",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Werror",
+   "-Wextra",
+   "-pthread",
+   "-g",
+   "-c",
+   "-o",
+   "main.o",
+   "main.c"
+  ],
+  "file": "main.c"
+ },
+ {
+  "directory": "/home/trupham/hive/philo/philo",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Werror",
+   "-Wextra",
+   "-pthread",
+   "-g",
+   "-c",
+   "-o",
+   "parser.o",
+   "parser.c"
+  ],
+  "file": "parser.c"
+ },
+ {
+  "directory": "/home/trupham/hive/philo/philo",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Werror",
+   "-Wextra",
+   "-pthread",
+   "-g",
+   "-c",
+   "-o",
+   "utils.o",
+   "utils.c"
+  ],
+  "file": "utils.c"
+ },
+ {
+  "directory": "/home/trupham/hive/philo/philo_bonus",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Werror",
+   "-Wextra",
+   "-pthread",
+   "-g",
+   "-c",
+   "-o",
+   "main.o",
+   "main.c"
+  ],
+  "file": "main.c"
+ },
+ {
+  "directory": "/home/trupham/hive/philo/philo_bonus",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Werror",
+   "-Wextra",
+   "-pthread",
+   "-g",
+   "-c",
+   "-o",
+   "parser.o",
+   "parser.c"
+  ],
+  "file": "parser.c"
+ },
+ {
+  "directory": "/home/trupham/hive/philo/philo_bonus",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Werror",
+   "-Wextra",
+   "-pthread",
+   "-g",
+   "-c",
+   "-o",
+   "utils.o",
+   "utils.c"
+  ],
+  "file": "utils.c"
+ },
+ {
+  "directory": "/home/trupham/hive/philo/philo_bonus",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Werror",
+   "-Wextra",
+   "-pthread",
+   "-g",
+   "-c",
+   "-o",
+   "monitor.o",
+   "monitor.c"
+  ],
+  "file": "monitor.c"
+ },
+ {
+  "directory": "/home/trupham/hive/philo/philo_bonus",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Werror",
+   "-Wextra",
+   "-pthread",
+   "-g",
+   "-c",
+   "-o",
+   "thread_utils.o",
+   "thread_utils.c"
+  ],
+  "file": "thread_utils.c"
+ },
+ {
+  "directory": "/home/trupham/hive/philo/philo_bonus",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Werror",
+   "-Wextra",
+   "-pthread",
+   "-g",
+   "-c",
+   "-o",
+   "philo_routine.o",
+   "philo_routine.c"
+  ],
+  "file": "philo_routine.c"
+ },
+ {
+  "directory": "/home/trupham/hive/philo/philo_bonus",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Werror",
+   "-Wextra",
+   "-pthread",
+   "-g",
+   "-c",
+   "-o",
+   "init.o",
+   "init.c"
+  ],
+  "file": "init.c"
+ },
+ {
+  "directory": "/home/trupham/hive/philo/philo_bonus",
+  "arguments": [
+   "cc",
+   "-Wall",
+   "-Werror",
+   "-Wextra",
+   "-pthread",
+   "-g",
+   "-c",
+   "-o",
+   "threads.o",
+   "threads.c"
+  ],
+  "file": "threads.c"
+ }
+]
