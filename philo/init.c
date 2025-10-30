@@ -21,7 +21,7 @@ void	init_sim(t_sim *sim, t_philo *philos)
 	sim->philos = philos;
 }
 
-void	init_philos(char **av, t_sim *sim, pthread_mutex_t *forks)
+static void	init_philos_constants(char **av, t_sim *sim)
 {
 	size_t	start_time;
 	int		i;
@@ -44,6 +44,18 @@ void	init_philos(char **av, t_sim *sim, pthread_mutex_t *forks)
 		sim->philos[i].meal_eaten = 0;
 		sim->philos[i].status = &(sim->status);
 		sim->philos[i].id = i + 1;
+		i++;
+	}
+}
+
+void	init_philos(char **av, t_sim *sim, pthread_mutex_t *forks)
+{
+	int	i;
+
+	i = 0;
+	init_philos_constants(av, sim);
+	while (i < ft_atoi(av[1]))
+	{
 		if (sim->philos[i].id == ft_atoi(av[1]))
 			sim->philos[i].lf = &forks[0];
 		else

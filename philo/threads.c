@@ -12,14 +12,14 @@
 
 #include "philo.h"
 
-void	thread_create(t_sim *sim, char **av, pthread_t *monitor)
+bool	thread_create(t_sim *sim, char **av, pthread_t *monitor)
 {
 	int	i;
 
 	if (pthread_create(monitor, NULL, monitor_routine, sim->philos) != 0)
 	{
 		write(2, "thread created error: %s\n", 26);
-		return ;
+		return (false);
 	}
 	i = 0;
 	while (i < ft_atoi(av[1]))
@@ -28,29 +28,31 @@ void	thread_create(t_sim *sim, char **av, pthread_t *monitor)
 				&sim->philos[i]) != 0)
 		{
 			write(2, "thread created error: %s\n", 26);
-			return ;
+			return (false);
 		}
 		i++;
 	}
+	return (true);
 }
 
-void	thread_join(t_sim *sim, char **av, pthread_t monitor)
+bool	thread_join(t_sim *sim, char **av, pthread_t monitor)
 {
 	int	i;
 
 	i = 0;
+	if (pthread_join(monitor, NULL) != 0)
+	{
+		write(2, "thread joined error: %s\n", 26);
+		return (false);
+	}
 	while (i < ft_atoi(av[1]))
 	{
 		if (pthread_join(sim->philos[i].thread, NULL) != 0)
 		{
 			write(2, "thread joined error: %s\n", 26);
-			return ;
+			return (false);
 		}
 		i++;
 	}
-	if (pthread_join(monitor, NULL) != 0)
-	{
-		write(2, "thread joined error: %s\n", 26);
-		return ;
-	}
+	return (true);
 }

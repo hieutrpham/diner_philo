@@ -48,9 +48,7 @@ void	*philo_routine(void *arg)
 		ft_usleep(1);
 	if (philo->num_philos == 1)
 	{
-		pthread_mutex_lock(philo->lf);
 		print_mes("has taken a fork", philo);
-		pthread_mutex_unlock(philo->lf);
 		return (NULL);
 	}
 	while (*philo->status != DEAD)

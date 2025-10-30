@@ -12,22 +12,32 @@
 
 #include "philo.h"
 
+static void	mutex_destroy(t_sim *sim)
+{
+	pthread_mutex_destroy(&(sim->print_lock));
+	pthread_mutex_destroy(&(sim->dead_lock));
+	pthread_mutex_destroy(&(sim->meal_lock));
+}
+
 int	main(int ac, char **av)
 {
-	t_philo			philos[MAX_THREAD];
-	pthread_mutex_t	forks[MAX_THREAD];
-	pthread_t		monitor;
-	t_sim			sim;
+	static t_philo			philos[MAX_THREAD];
+	static pthread_mutex_t	forks[MAX_THREAD];
+	pthread_t				monitor;
+	t_sim					sim;
 
 	monitor = 0;
 	if (!check_arg(ac, av))
 		return (1);
 	init_sim(&sim, philos);
 	init_philos(av, &sim, forks);
-	thread_create(&sim, av, &monitor);
+	if (!thread_create(&sim, av, &monitor))
+	{
+		thread_join(&sim, av, monitor);
+		mutex_destroy(&sim);
+		return (1);
+	}
 	thread_join(&sim, av, monitor);
-	pthread_mutex_destroy(&(sim.print_lock));
-	pthread_mutex_destroy(&(sim.dead_lock));
-	pthread_mutex_destroy(&(sim.meal_lock));
+	mutex_destroy(&sim);
 	return (0);
 }
