@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-static bool	isspace(int c)
+static bool	ft_isspace(int c)
 {
 	if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v'
 		|| c == '\f')
@@ -38,7 +38,7 @@ int	ft_atoi(const char *nptr)
 	sign = 1;
 	if (!nptr)
 		return (-1);
-	while (isspace(nptr[i]))
+	while (ft_isspace(nptr[i]))
 		i++;
 	if (nptr[i] == '+')
 		i++;

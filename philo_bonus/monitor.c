@@ -47,13 +47,13 @@ static bool	all_eaten(t_philo *philos)
 	num_philos = 0;
 	while (i < philos[0].num_philos)
 	{
-		pthread_mutex_lock((&philos[0])->meal_lock);
+		pthread_mutex_lock(philos[0].meal_lock);
 		if (philos[i].meal_eaten >= philos[i].req_meal)
 			num_philos++;
-		pthread_mutex_unlock((&philos[0])->meal_lock);
+		pthread_mutex_unlock(philos[0].meal_lock);
 		i++;
 	}
-	if (num_philos == (&philos[0])->num_philos)
+	if (num_philos == philos[0].num_philos)
 		return (true);
 	return (false);
 }
@@ -69,18 +69,18 @@ void	*monitor_routine(void *arg)
 		dead = has_dead_philo(philos);
 		if (dead >= 0)
 		{
-			pthread_mutex_lock((&philos[0])->print_lock);
-			*(&philos[0])->status = DEAD;
-			printf("%zu %d died\n", get_time() - (&philos[0])->start_time, dead
+			pthread_mutex_lock(philos[0].print_lock);
+			*philos[0].status = DEAD;
+			printf("%zu %d died\n", get_time() - philos[0].start_time, dead
 				+ 1);
-			pthread_mutex_unlock((&philos[0])->print_lock);
+			pthread_mutex_unlock(philos[0].print_lock);
 			break ;
 		}
 		if (philos[0].req_meal && all_eaten(philos))
 		{
-			pthread_mutex_lock((&philos[0])->dead_lock);
-			*(&philos[0])->status = DEAD;
-			pthread_mutex_unlock((&philos[0])->dead_lock);
+			pthread_mutex_lock(philos[0].dead_lock);
+			*philos[0].status = DEAD;
+			pthread_mutex_unlock(philos[0].dead_lock);
 			break ;
 		}
 	}

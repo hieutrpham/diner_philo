@@ -42,14 +42,14 @@ bool	thread_join(t_sim *sim, char **av, pthread_t monitor)
 	i = 0;
 	if (pthread_join(monitor, NULL) != 0)
 	{
-		write(2, "thread joined error: %s\n", 26);
+		write(2, "thread joined error: %s\n", 25);
 		return (false);
 	}
 	while (i < ft_atoi(av[1]))
 	{
 		if (pthread_join(sim->philos[i].thread, NULL) != 0)
 		{
-			write(2, "thread joined error: %s\n", 26);
+			write(2, "thread joined error: %s\n", 25);
 			return (false);
 		}
 		i++;

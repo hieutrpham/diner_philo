@@ -70,7 +70,7 @@ bool	check_arg(int ac, char **av)
 		write(2, "No philo no fork\n", 18);
 		return (false);
 	}
-	if (ft_atoi(av[1]) > MAX_THREAD)
+	if (ft_atoi(av[1]) > MAX_PHILO)
 	{
 		write(2, "Exceeded max threads\n", 22);
 		return (false);

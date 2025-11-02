@@ -12,16 +12,17 @@
 
 #include "philo.h"
 
-void	init_sim(t_sim *sim, t_philo *philos)
+void	init_sim(t_sim *sim, t_philo *philos, pid_t *pids)
 {
 	sim->status = ALIVE;
-	pthread_mutex_init(&(sim->print_lock), NULL);
-	pthread_mutex_init(&(sim->dead_lock), NULL);
-	pthread_mutex_init(&(sim->meal_lock), NULL);
+	sim->print_lock = sem_open("print_lock", O_CREAT | O_EXCL, 0644, 1);
+	sim->dead_lock = sem_open("dead_lock", O_CREAT | O_EXCL, 0644, 1), ;
+	sim->meal_lock = sem_open("meal_lock", O_CREAT | O_EXCL, 0644, 1);
 	sim->philos = philos;
+	sim->pids = pids;
 }
 
-static void	init_philos_constants(char **av, t_sim *sim)
+void	init_philos(char **av, t_sim *sim)
 {
 	size_t	start_time;
 	int		i;
@@ -44,26 +45,6 @@ static void	init_philos_constants(char **av, t_sim *sim)
 		sim->philos[i].meal_eaten = 0;
 		sim->philos[i].status = &(sim->status);
 		sim->philos[i].id = i + 1;
-		i++;
-	}
-}
-
-void	init_philos(char **av, t_sim *sim, pthread_mutex_t *forks)
-{
-	int	i;
-
-	i = 0;
-	init_philos_constants(av, sim);
-	while (i < ft_atoi(av[1]))
-	{
-		if (sim->philos[i].id == ft_atoi(av[1]))
-			sim->philos[i].lf = &forks[0];
-		else
-			sim->philos[i].lf = &forks[sim->philos[i].id];
-		if (sim->philos[i].id == 1)
-			sim->philos[i].rf = &forks[0];
-		else
-			sim->philos[i].rf = &forks[sim->philos[i].id - 1];
 		i++;
 	}
 }

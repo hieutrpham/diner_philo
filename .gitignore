@@ -1,3 +1,5 @@
-/philo/*.o
-obj
-/philo/philo
+*/*.o
+*/philo
+*/philo_bonus
+*/Session.vim
+*/philo_trace
