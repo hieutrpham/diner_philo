@@ -11,13 +11,21 @@
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <semaphore.h>
 
-void	init_sim(t_sim *sim, t_philo *philos, pid_t *pids)
+void	init_sim(t_sim *sim, t_philo *philos, pid_t *pids, char **av)
 {
 	sim->status = ALIVE;
-	sim->print_lock = sem_open("print_lock", O_CREAT | O_EXCL, 0644, 1);
-	sim->dead_lock = sem_open("dead_lock", O_CREAT | O_EXCL, 0644, 1), ;
-	sim->meal_lock = sem_open("meal_lock", O_CREAT | O_EXCL, 0644, 1);
+	sem_unlink(PRINT_SEM);
+	sem_unlink(DEAD_SEM);
+	sem_unlink(MEAL_SEM);
+	sem_unlink(FORK_SEM);
+	sim->print_lock = sem_open(PRINT_SEM, O_CREAT | O_EXCL, 0644, 1);
+	sim->dead_lock = sem_open(DEAD_SEM, O_CREAT | O_EXCL, 0644, 1);
+	sim->meal_lock = sem_open(MEAL_SEM, O_CREAT | O_EXCL, 0644, 1);
+	sim->forks = sem_open(FORK_SEM, O_CREAT | O_EXCL, 0644, ft_atoi(av[1]));
+	if (sim->forks == SEM_FAILED)
+		printf("failed to fork sem\n");
 	sim->philos = philos;
 	sim->pids = pids;
 }
@@ -39,11 +47,12 @@ void	init_philos(char **av, t_sim *sim)
 		sim->philos[i].time_to_sleep = ft_atoi(av[4]);
 		if (av[5])
 			sim->philos[i].req_meal = ft_atoi(av[5]);
-		sim->philos[i].print_lock = &(sim->print_lock);
-		sim->philos[i].dead_lock = &(sim->dead_lock);
-		sim->philos[i].meal_lock = &(sim->meal_lock);
+		sim->philos[i].print_lock = sim->print_lock;
+		sim->philos[i].dead_lock = sim->dead_lock;
+		sim->philos[i].meal_lock = sim->meal_lock;
 		sim->philos[i].meal_eaten = 0;
 		sim->philos[i].status = &(sim->status);
+		sim->philos[i].forks = sim->forks;
 		sim->philos[i].id = i + 1;
 		i++;
 	}

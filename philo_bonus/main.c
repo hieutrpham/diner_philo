@@ -18,9 +18,20 @@ int	main(int ac, char **av)
 	static pid_t	pids[MAX_PHILO];
 	t_sim			sim;
 
+	sim = (t_sim){};
 	if (!check_arg(ac, av))
 		return (1);
-	init_sim(&sim, philos, pids);
+	init_sim(&sim, philos, pids, av);
 	init_philos(av, &sim);
+	size_t i = 0;
+	while (i < philos[0].num_philos)
+	{
+		pid_t id = fork();
+		sim.pids[i] = id;
+		if (id == 0)
+			philo_routine(&philos[i]);
+		i++;
+	}
+	waitpid(-1, NULL, 0);
 	return (0);
 }

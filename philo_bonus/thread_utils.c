@@ -35,9 +35,9 @@ void	print_mes(char *mes, t_philo *philo)
 {
 	size_t	time;
 
-	pthread_mutex_lock(philo->print_lock);
+	sem_wait(philo->print_lock);
 	time = get_time() - philo->start_time;
 	if (*philo->status != DEAD)
 		printf("%zu %d %s\n", time, philo->id, mes);
-	pthread_mutex_unlock(philo->print_lock);
+	sem_post(philo->print_lock);
 }
