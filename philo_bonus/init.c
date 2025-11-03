@@ -39,6 +39,7 @@ void	init_philos(char **av, t_sim *sim)
 	start_time = get_time();
 	while (i < ft_atoi(av[1]))
 	{
+		sim->philos[i].pids = sim->pids;
 		sim->philos[i].start_time = start_time;
 		sim->philos[i].last_eat_time = start_time;
 		sim->philos[i].num_philos = ft_atoi(av[1]);

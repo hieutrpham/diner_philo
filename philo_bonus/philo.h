@@ -53,6 +53,7 @@ typedef struct s_philo
 	sem_t				*dead_lock;
 	sem_t				*meal_lock;
 	sem_t				*forks;
+	pid_t		*pids;
 }						t_philo;
 
 typedef struct s_sim
