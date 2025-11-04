@@ -11,21 +11,17 @@
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <semaphore.h>
 
 void	init_sim(t_sim *sim, t_philo *philos, pid_t *pids, char **av)
 {
-	sim->status = ALIVE;
 	sem_unlink(PRINT_SEM);
 	sem_unlink(DEAD_SEM);
 	sem_unlink(MEAL_SEM);
 	sem_unlink(FORK_SEM);
 	sim->print_lock = sem_open(PRINT_SEM, O_CREAT | O_EXCL, 0644, 1);
-	sim->dead_lock = sem_open(DEAD_SEM, O_CREAT | O_EXCL, 0644, 0);
-	sim->meal_lock = sem_open(MEAL_SEM, O_CREAT | O_EXCL, 0644, 1);
+	sim->dead_lock = sem_open(DEAD_SEM, O_CREAT | O_EXCL, 0644, 1);
+	sim->meal_lock = sem_open(MEAL_SEM, O_CREAT | O_EXCL, 0644, 0);
 	sim->forks = sem_open(FORK_SEM, O_CREAT | O_EXCL, 0644, ft_atoi(av[1]));
-	if (sim->forks == SEM_FAILED)
-		printf("failed to fork sem\n");
 	sim->philos = philos;
 	sim->pids = pids;
 }
@@ -52,7 +48,6 @@ void	init_philos(char **av, t_sim *sim)
 		sim->philos[i].dead_lock = sim->dead_lock;
 		sim->philos[i].meal_lock = sim->meal_lock;
 		sim->philos[i].meal_eaten = 0;
-		sim->philos[i].status = &(sim->status);
 		sim->philos[i].forks = sim->forks;
 		sim->philos[i].id = i + 1;
 		i++;

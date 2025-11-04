@@ -37,7 +37,6 @@ void	print_mes(char *mes, t_philo *philo)
 
 	sem_wait(philo->print_lock);
 	time = get_time() - philo->start_time;
-	if (*philo->status != DEAD)
-		printf("%zu %d %s\n", time, philo->id, mes);
+	printf("%zu %d %s\n", time, philo->id, mes);
 	sem_post(philo->print_lock);
 }

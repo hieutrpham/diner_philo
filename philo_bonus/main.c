@@ -11,27 +11,57 @@
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <bits/pthreadtypes.h>
 
-void kill_proc(t_sim *sim)
+void	cleanup(t_philo *philo)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
-	while (i < sim->philos[0].num_philos)
-	{
-		kill(sim->pids[i], SIGKILL);
-		i++;
-	}
+	sem_close(philo->dead_lock);
+	sem_close(philo->print_lock);
+	sem_close(philo->meal_lock);
+	sem_close(philo->forks);
+	while (i < philo->num_philos)
+		if (philo->pids[i] != -1)
+			kill(philo->pids[i++], SIGKILL);
 }
 
-void *dead_routine(void *arg)
+void	*meal_routine(void *arg)
 {
-	t_sim *sim;
+	size_t	finish_eating;
+	t_philo	*philos;
 
-	sim = (t_sim *)arg;
-	sem_wait(sim->dead_lock);
-	kill_proc(sim);
-	return NULL;
+	philos = (t_philo *)arg;
+	finish_eating = 0;
+	while (true)
+	{
+		sem_wait(philos[0].meal_lock);
+		finish_eating++;
+		if (finish_eating >= philos[0].num_philos)
+		{
+			cleanup(&philos[0]);
+			exit(0);
+		}
+	}
+	return (NULL);
+}
+
+void	start_sim(t_sim *sim, t_philo *philos)
+{
+	size_t	i;
+	pid_t	id;
+
+	i = 0;
+	while (i < philos[0].num_philos)
+	{
+		id = fork();
+		sim->pids[i] = id;
+		if (id == 0)
+			philo_routine(&philos[i]);
+		i++;
+	}
+	waitpid(-1, NULL, 0);
 }
 
 int	main(int ac, char **av)
@@ -39,23 +69,19 @@ int	main(int ac, char **av)
 	static t_philo	philos[MAX_PHILO];
 	static pid_t	pids[MAX_PHILO];
 	t_sim			sim;
+	pthread_t		meal;
 
 	sim = (t_sim){};
 	if (!check_arg(ac, av))
 		return (1);
 	init_sim(&sim, philos, pids, av);
 	init_philos(av, &sim);
-	size_t i = 0;
-	pthread_t dead_checker;
-	pthread_create(&dead_checker, NULL, dead_routine, &sim);
-	while (i < philos[0].num_philos)
+	if (philos[0].req_meal > 0)
 	{
-		pid_t id = fork();
-		sim.pids[i] = id;
-		if (id == 0)
-			philo_routine(&philos[i]);
-		i++;
+		pthread_create(&meal, NULL, meal_routine, philos);
+		pthread_detach(meal);
 	}
-	waitpid(-1, NULL, 0);
+	start_sim(&sim, philos);
+	cleanup(&philos[0]);
 	return (0);
 }

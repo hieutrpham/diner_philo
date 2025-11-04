@@ -19,10 +19,12 @@ static void	eat(t_philo *philo)
 	sem_wait(philo->forks);
 	print_mes("has taken a fork", philo);
 	print_mes("is eating", philo);
-	sem_wait(philo->meal_lock);
+	sem_wait(philo->dead_lock);
 	philo->last_eat_time = get_time();
 	philo->meal_eaten += 1;
-	sem_post(philo->meal_lock);
+	sem_post(philo->dead_lock);
+	if (philo->meal_eaten >= philo->req_meal)
+		sem_post(philo->meal_lock);
 	ft_usleep(philo->time_to_eat);
 	sem_post(philo->forks);
 	sem_post(philo->forks);
@@ -41,22 +43,18 @@ static void	sleeps(t_philo *philo)
 
 void	*philo_routine(void *arg)
 {
-	t_philo	*philo;
-	pthread_t monitor;
+	t_philo		*philo;
+	pthread_t	monitor;
 
 	philo = (t_philo *)arg;
 	if (pthread_create(&monitor, NULL, monitor_routine, philo) != 0)
 		return (printf("error pthread_create\n"), NULL);
-	if (philo->num_philos == 1)
-	{
-		print_mes("has taken a fork", philo);
-		return (NULL);
-	}
 	while (true)
 	{
 		eat(philo);
 		sleeps(philo);
 		think(philo);
 	}
+	pthread_join(monitor, NULL);
 	return (NULL);
 }
