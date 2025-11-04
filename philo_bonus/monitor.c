@@ -32,11 +32,7 @@ void	*monitor_routine(void *arg)
 		{
 			sem_wait(philo->print_lock);
 			printf("%zu %d died\n", get_time() - philo->start_time, philo->id);
-			sem_close(philo->dead_lock);
-			sem_close(philo->print_lock);
-			sem_close(philo->meal_lock);
-			sem_close(philo->forks);
-			exit(0);
+			ft_sem_close(philo, 0);
 		}
 	}
 	return (NULL);

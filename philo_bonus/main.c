@@ -13,15 +13,22 @@
 #include "philo.h"
 #include <bits/pthreadtypes.h>
 
+void ft_sem_close(t_philo *philo, int sig)
+{
+	sem_close(philo->dead_lock);
+	sem_close(philo->print_lock);
+	sem_close(philo->meal_lock);
+	sem_close(philo->forks);
+	if (sig >= 0)
+		exit(sig);
+}
+
 void	cleanup(t_philo *philo)
 {
 	size_t	i;
 
 	i = 0;
-	sem_close(philo->dead_lock);
-	sem_close(philo->print_lock);
-	sem_close(philo->meal_lock);
-	sem_close(philo->forks);
+	ft_sem_close(philo, -1);
 	while (i < philo->num_philos)
 		if (philo->pids[i] != -1)
 			kill(philo->pids[i++], SIGKILL);
@@ -78,8 +85,10 @@ int	main(int ac, char **av)
 	init_philos(av, &sim);
 	if (philos[0].req_meal > 0)
 	{
-		pthread_create(&meal, NULL, meal_routine, philos);
-		pthread_detach(meal);
+		if (pthread_create(&meal, NULL, meal_routine, philos) != 0)
+			ft_sem_close(&philos[0], 1);
+		if (pthread_detach(meal) != 0)
+			ft_sem_close(&philos[0], 1);
 	}
 	start_sim(&sim, philos);
 	cleanup(&philos[0]);
