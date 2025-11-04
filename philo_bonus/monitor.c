@@ -44,18 +44,6 @@ static bool	all_eaten(t_philo *philo)
 	return (false);
 }
 
-void kill_proc(t_philo *philo)
-{
-	size_t i;
-
-	i = 0;
-	while (i < philo->num_philos)
-	{
-		kill(philo->pids[i], SIGKILL);
-		i++;
-	}
-}
-
 void	*monitor_routine(void *arg)
 {
 	t_philo	*philo;
@@ -67,7 +55,7 @@ void	*monitor_routine(void *arg)
 		{
 			sem_wait(philo->print_lock);
 			printf("%zu %d died\n", get_time() - philo->start_time, philo->id);
-			sem_post(philo->print_lock);
+			sem_post(philo->dead_lock);
 			exit(0);
 		}
 		if (philo->req_meal && all_eaten(philo))

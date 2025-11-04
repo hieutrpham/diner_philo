@@ -23,7 +23,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
-#include <sys/wait.h>
+# include <sys/wait.h>
 
 # define MAX_PHILO 300
 # define PRINT_SEM "print_lock"

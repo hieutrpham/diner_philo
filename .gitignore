@@ -3,3 +3,5 @@
 */philo_bonus
 */Session.vim
 */philo_trace
+*/.cache
+*/compile_commands.json

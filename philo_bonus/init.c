@@ -21,7 +21,7 @@ void	init_sim(t_sim *sim, t_philo *philos, pid_t *pids, char **av)
 	sem_unlink(MEAL_SEM);
 	sem_unlink(FORK_SEM);
 	sim->print_lock = sem_open(PRINT_SEM, O_CREAT | O_EXCL, 0644, 1);
-	sim->dead_lock = sem_open(DEAD_SEM, O_CREAT | O_EXCL, 0644, 1);
+	sim->dead_lock = sem_open(DEAD_SEM, O_CREAT | O_EXCL, 0644, 0);
 	sim->meal_lock = sem_open(MEAL_SEM, O_CREAT | O_EXCL, 0644, 1);
 	sim->forks = sem_open(FORK_SEM, O_CREAT | O_EXCL, 0644, ft_atoi(av[1]));
 	if (sim->forks == SEM_FAILED)
