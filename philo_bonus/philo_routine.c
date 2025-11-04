@@ -47,6 +47,8 @@ void	*philo_routine(void *arg)
 	pthread_t	monitor;
 
 	philo = (t_philo *)arg;
+	if (philo->id % 2 == 0)
+		ft_usleep(1);
 	if (pthread_create(&monitor, NULL, monitor_routine, philo) != 0)
 		return (printf("error pthread_create\n"), NULL);
 	while (true)
