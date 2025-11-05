@@ -63,7 +63,7 @@ int					ft_atoi(const char *nptr);
 size_t				ft_strlen(const char *s);
 void				*monitor_routine(void *arg);
 size_t				get_time(void);
-int					ft_usleep(size_t ms);
+void				ft_usleep(size_t ms);
 void				print_mes(char *mes, t_philo *philo);
 void				*philo_routine(void *arg);
 void				init_sim(t_sim *sim, t_philo *philos);
