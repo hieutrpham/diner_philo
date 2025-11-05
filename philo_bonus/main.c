@@ -13,7 +13,7 @@
 #include "philo.h"
 #include <bits/pthreadtypes.h>
 
-void ft_sem_close(t_philo *philo, int sig)
+void	ft_sem_close(t_philo *philo, int sig)
 {
 	sem_close(philo->dead_lock);
 	sem_close(philo->print_lock);

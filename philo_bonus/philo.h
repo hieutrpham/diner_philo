@@ -76,5 +76,5 @@ void		*philo_routine(void *arg);
 void		init_sim(t_sim *sim, t_philo *philos, pid_t *pids, char **av);
 void		init_philos(char **av, t_sim *sim);
 void		cleanup(t_philo *philo);
-void 		ft_sem_close(t_philo *philo, int sig);
+void		ft_sem_close(t_philo *philo, int sig);
 #endif // PHILO_H
