@@ -21,14 +21,9 @@
 # include <sys/time.h>
 # include <unistd.h>
 # include <stdint.h>
-
 # define MAX_THREAD 300
-
-typedef enum s_status
-{
-	DEAD = 1,
-	ALIVE
-}					t_status;
+# define DEAD 1
+# define ALIVE 2
 
 typedef struct s_philo
 {
@@ -42,12 +37,12 @@ typedef struct s_philo
 	size_t				last_eat_time;
 	size_t				num_philos;
 	size_t				meal_eaten;
-	_Atomic t_status	*status;
+	int	*status;
 	pthread_mutex_t		*lf;
 	pthread_mutex_t		*rf;
 	pthread_mutex_t		*print_lock;
-	pthread_mutex_t		*dead_lock;
 	pthread_mutex_t		*meal_lock;
+	pthread_mutex_t		*dead_lock;
 }					t_philo;
 
 typedef struct s_sim
@@ -55,7 +50,7 @@ typedef struct s_sim
 	pthread_mutex_t		meal_lock;
 	pthread_mutex_t		print_lock;
 	pthread_mutex_t		dead_lock;
-	_Atomic t_status	status;
+	int	status;
 	t_philo				*philos;
 }					t_sim;
 
@@ -71,4 +66,5 @@ void				init_sim(t_sim *sim, t_philo *philos);
 void				init_philos(char **av, t_sim *sim, pthread_mutex_t *forks);
 bool				thread_create(t_sim *sim, char **av, pthread_t *monitor);
 bool				thread_join(t_sim *sim, char **av, pthread_t monitor);
+bool stop_sim(t_philo *philo);
 #endif // PHILO_H

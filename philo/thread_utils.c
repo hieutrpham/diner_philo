@@ -36,7 +36,7 @@ void	print_mes(char *mes, t_philo *philo)
 
 	pthread_mutex_lock(philo->print_lock);
 	time = get_time() - philo->start_time;
-	if (*philo->status != DEAD)
+	if (!stop_sim(philo))
 		printf("%zu %d %s\n", time, philo->id, mes);
 	pthread_mutex_unlock(philo->print_lock);
 }

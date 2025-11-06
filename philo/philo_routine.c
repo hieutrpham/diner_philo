@@ -16,12 +16,12 @@ static void meal(t_philo *philo)
 {
 	size_t	start;
 
-	start = get_time();
-	print_mes("is eating", philo);
 	pthread_mutex_lock(philo->meal_lock);
 	philo->last_eat_time = get_time();
 	philo->meal_eaten += 1;
-	while (get_time() - start < philo->time_to_eat && *philo->status != DEAD)
+	start = get_time();
+	print_mes("is eating", philo);
+	while (get_time() - start < philo->time_to_eat && !stop_sim(philo))
 		usleep(100);
 	pthread_mutex_unlock(philo->meal_lock);
 }
@@ -53,7 +53,9 @@ static void eat(t_philo *philo)
 static void	think(t_philo *philo)
 {
 	print_mes("is thinking", philo);
-	ft_usleep(1);
+	// while (get_time() - philo->last_eat_time < philo->time_to_die
+	// 		&& !stop_sim(philo))
+	// 	usleep(100);
 }
 
 static void	sleeps(t_philo *philo)
@@ -62,7 +64,7 @@ static void	sleeps(t_philo *philo)
 
 	print_mes("is sleeping", philo);
 	start = get_time();
-	while (get_time() - start < philo->time_to_sleep && *philo->status != DEAD)
+	while (get_time() - start < philo->time_to_sleep && !stop_sim(philo))
 		usleep(100);
 }
 
@@ -78,10 +80,14 @@ void	*philo_routine(void *arg)
 		print_mes("has taken a fork", philo);
 		return (NULL);
 	}
-	while (*philo->status != DEAD)
+	while (!stop_sim(philo))
 	{
 		eat(philo);
+		if (stop_sim(philo))
+			return NULL;
 		sleeps(philo);
+		if (stop_sim(philo))
+			return NULL;
 		think(philo);
 	}
 	return (NULL);
