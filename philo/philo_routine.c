@@ -12,29 +12,48 @@
 
 #include "philo.h"
 
-static void	eat(t_philo *philo)
+static void meal(t_philo *philo)
 {
 	size_t	start;
 
 	start = get_time();
-	pthread_mutex_lock(philo->lf);
-	print_mes("has taken a fork", philo);
-	pthread_mutex_lock(philo->rf);
-	print_mes("has taken a fork", philo);
 	print_mes("is eating", philo);
 	pthread_mutex_lock(philo->meal_lock);
 	philo->last_eat_time = get_time();
 	philo->meal_eaten += 1;
-	pthread_mutex_unlock(philo->meal_lock);
 	while (get_time() - start < philo->time_to_eat && *philo->status != DEAD)
 		usleep(100);
-	pthread_mutex_unlock(philo->lf);
-	pthread_mutex_unlock(philo->rf);
+	pthread_mutex_unlock(philo->meal_lock);
+}
+
+static void eat(t_philo *philo)
+{
+	pthread_mutex_t	*f1;
+	pthread_mutex_t	*f2;
+
+	if ((uintptr_t)philo->lf < (uintptr_t)philo->rf)
+	{
+		f1 = philo->lf;
+		f2 = philo->rf;
+	}
+	else
+	{
+		f1 = philo->rf;
+		f2 = philo->lf;
+	}
+	pthread_mutex_lock(f1);
+	print_mes("has taken a fork", philo);
+	pthread_mutex_lock(f2);
+	print_mes("has taken a fork", philo);
+	meal(philo);
+	pthread_mutex_unlock(f2);
+	pthread_mutex_unlock(f1);
 }
 
 static void	think(t_philo *philo)
 {
 	print_mes("is thinking", philo);
+	ft_usleep(1);
 }
 
 static void	sleeps(t_philo *philo)
@@ -52,7 +71,7 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	if (philo->id % 2 == 0)
+	if (philo->id % 2 == 1)
 		ft_usleep(1);
 	if (philo->num_philos == 1)
 	{

@@ -78,9 +78,9 @@ void	*monitor_routine(void *arg)
 		}
 		if (philos[0].req_meal && all_eaten(philos))
 		{
-			pthread_mutex_lock(philos[0].dead_lock);
+			// pthread_mutex_lock(philos[0].meal_lock);
 			*philos[0].status = DEAD;
-			pthread_mutex_unlock(philos[0].dead_lock);
+			// pthread_mutex_unlock(philos[0].meal_lock);
 			break ;
 		}
 	}
