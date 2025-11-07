@@ -13,6 +13,7 @@
 #ifndef PHILO_H
 # define PHILO_H
 
+# include <stdatomic.h>
 # include <pthread.h>
 # include <stdbool.h>
 # include <stdio.h>
@@ -29,28 +30,24 @@ typedef struct s_philo
 {
 	int					id;
 	pthread_t			thread;
-	size_t				req_meal;
+	int				req_meal;
 	size_t				time_to_die;
 	size_t				time_to_eat;
 	size_t				time_to_sleep;
 	size_t				start_time;
-	size_t				last_eat_time;
+	atomic_ullong				last_eat_time;
 	size_t				num_philos;
-	size_t				meal_eaten;
-	int	*status;
+	atomic_int				meal_eaten;
+	atomic_int	*status;
 	pthread_mutex_t		*lf;
 	pthread_mutex_t		*rf;
 	pthread_mutex_t		*print_lock;
-	pthread_mutex_t		*meal_lock;
-	pthread_mutex_t		*dead_lock;
 }					t_philo;
 
 typedef struct s_sim
 {
-	pthread_mutex_t		meal_lock;
 	pthread_mutex_t		print_lock;
-	pthread_mutex_t		dead_lock;
-	int	status;
+	atomic_int	status;
 	t_philo				*philos;
 }					t_sim;
 

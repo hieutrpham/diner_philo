@@ -16,8 +16,8 @@ void	init_sim(t_sim *sim, t_philo *philos)
 {
 	sim->status = ALIVE;
 	pthread_mutex_init(&(sim->print_lock), NULL);
-	pthread_mutex_init(&(sim->dead_lock), NULL);
-	pthread_mutex_init(&(sim->meal_lock), NULL);
+	// pthread_mutex_init(&(sim->dead_lock), NULL);
+	// pthread_mutex_init(&(sim->meal_lock), NULL);
 	sim->philos = philos;
 }
 
@@ -39,8 +39,8 @@ static void	init_philos_constants(char **av, t_sim *sim)
 		if (av[5])
 			sim->philos[i].req_meal = ft_atoi(av[5]);
 		sim->philos[i].print_lock = &(sim->print_lock);
-		sim->philos[i].dead_lock = &(sim->dead_lock);
-		sim->philos[i].meal_lock = &(sim->meal_lock);
+		// sim->philos[i].dead_lock = &(sim->dead_lock);
+		// sim->philos[i].meal_lock = &(sim->meal_lock);
 		sim->philos[i].meal_eaten = 0;
 		sim->philos[i].status = &(sim->status);
 		sim->philos[i].id = i + 1;
