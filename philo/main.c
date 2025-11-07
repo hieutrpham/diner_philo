@@ -15,8 +15,6 @@
 static void	mutex_destroy(t_sim *sim)
 {
 	pthread_mutex_destroy(&(sim->print_lock));
-	// pthread_mutex_destroy(&(sim->dead_lock));
-	// pthread_mutex_destroy(&(sim->meal_lock));
 }
 
 int	main(int ac, char **av)

@@ -16,11 +16,6 @@ bool	thread_create(t_sim *sim, char **av, pthread_t *monitor)
 {
 	int	i;
 
-	if (pthread_create(monitor, NULL, monitor_routine, sim->philos) != 0)
-	{
-		write(2, "thread created error: %s\n", 26);
-		return (false);
-	}
 	i = 0;
 	while (i < ft_atoi(av[1]))
 	{
@@ -31,6 +26,13 @@ bool	thread_create(t_sim *sim, char **av, pthread_t *monitor)
 			return (false);
 		}
 		i++;
+	}
+	sim->begin = true;
+	usleep(1000);
+	if (pthread_create(monitor, NULL, monitor_routine, sim->philos) != 0)
+	{
+		write(2, "thread created error: %s\n", 26);
+		return (false);
 	}
 	return (true);
 }

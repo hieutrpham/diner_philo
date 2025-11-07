@@ -14,7 +14,7 @@
 
 static bool	is_dead(t_philo *philo)
 {
-	size_t time;
+	size_t	time;
 
 	time = get_time();
 	if (time - philo->last_eat_time > philo->time_to_die)
@@ -28,11 +28,11 @@ static bool	is_dead(t_philo *philo)
 	return (false);
 }
 
-bool stop_sim(t_philo *philo)
+bool	stop_sim(t_philo *philo)
 {
 	if (*philo->status == DEAD)
-		return true;
-	return false;
+		return (true);
+	return (false);
 }
 
 static int	has_dead_philo(t_philo *philos)

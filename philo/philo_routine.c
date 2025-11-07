@@ -12,19 +12,23 @@
 
 #include "philo.h"
 
-static void meal(t_philo *philo)
+static void	meal(t_philo *philo)
 {
-	size_t	start;
+	unsigned long long	start;
 
 	start = get_time();
 	philo->last_eat_time = start;
 	philo->meal_eaten += 1;
 	print_mes("is eating", philo);
-	while (get_time() - start < philo->time_to_eat && !stop_sim(philo))
-		usleep(500);
+	while (get_time() - start < philo->time_to_eat)
+	{
+		if (stop_sim(philo))
+			return ;
+		usleep(DELAY);
+	}
 }
 
-static void eat(t_philo *philo)
+static void	eat(t_philo *philo)
 {
 	pthread_mutex_t	*f1;
 	pthread_mutex_t	*f2;
@@ -50,10 +54,18 @@ static void eat(t_philo *philo)
 
 static void	think(t_philo *philo)
 {
+	unsigned long long	last_eat;
+	size_t start;
+
+	int delay = 0;
+	start = get_time();
+	last_eat = philo->last_eat_time;
 	print_mes("is thinking", philo);
-	while (get_time() - philo->last_eat_time < philo->time_to_die
-			&& !stop_sim(philo))
-		usleep(500);
+	if (stop_sim(philo))
+		return ;
+	delay = (philo->time_to_die - philo->time_to_sleep - philo->time_to_eat)/2;
+	if (delay > 0)
+		usleep(delay*1000);
 }
 
 static void	sleeps(t_philo *philo)
@@ -62,8 +74,12 @@ static void	sleeps(t_philo *philo)
 
 	print_mes("is sleeping", philo);
 	start = get_time();
-	while (get_time() - start < philo->time_to_sleep && !stop_sim(philo))
-		usleep(500);
+	while (get_time() - start < philo->time_to_sleep)
+	{
+		if (stop_sim(philo))
+			return ;
+		usleep(DELAY);
+	}
 }
 
 void	*philo_routine(void *arg)
@@ -71,8 +87,11 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	if (philo->id % 2 == 1)
-		ft_usleep(1);
+	while (philo->sim->begin != true)
+		usleep(100);
+	print_mes("is thinking", philo);
+	if (philo->id % 2 == 0)
+		usleep(philo->time_to_eat*1000/2);
 	if (philo->num_philos == 1)
 	{
 		print_mes("has taken a fork", philo);
@@ -82,10 +101,10 @@ void	*philo_routine(void *arg)
 	{
 		eat(philo);
 		if (stop_sim(philo))
-			return NULL;
+			return (NULL);
 		sleeps(philo);
 		if (stop_sim(philo))
-			return NULL;
+			return (NULL);
 		think(philo);
 	}
 	return (NULL);
