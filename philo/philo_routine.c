@@ -55,17 +55,19 @@ static void	eat(t_philo *philo)
 static void	think(t_philo *philo)
 {
 	unsigned long long	last_eat;
-	size_t start;
+	size_t				start;
+	int					delay;
 
-	int delay = 0;
+	delay = 0;
 	start = get_time();
 	last_eat = philo->last_eat_time;
 	print_mes("is thinking", philo);
 	if (stop_sim(philo))
 		return ;
-	delay = (philo->time_to_die - philo->time_to_sleep - philo->time_to_eat)/2;
+	delay = (philo->time_to_die - philo->time_to_sleep - philo->time_to_eat)
+		/ 2;
 	if (delay > 0)
-		usleep(delay*1000);
+		usleep(delay * 1000);
 }
 
 static void	sleeps(t_philo *philo)
@@ -91,7 +93,7 @@ void	*philo_routine(void *arg)
 		usleep(100);
 	print_mes("is thinking", philo);
 	if (philo->id % 2 == 0)
-		usleep(philo->time_to_eat*1000/2);
+		usleep(philo->time_to_eat * 1000 / 2);
 	if (philo->num_philos == 1)
 	{
 		print_mes("has taken a fork", philo);
