@@ -54,13 +54,8 @@ static void	eat(t_philo *philo)
 
 static void	think(t_philo *philo)
 {
-	unsigned long long	last_eat;
-	size_t				start;
 	int					delay;
 
-	delay = 0;
-	start = get_time();
-	last_eat = philo->last_eat_time;
 	print_mes("is thinking", philo);
 	if (stop_sim(philo))
 		return ;
