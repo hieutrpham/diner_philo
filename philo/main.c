@@ -12,9 +12,10 @@
 
 #include "philo.h"
 
-static void	mutex_destroy(t_sim *sim)
+static int	mutex_destroy(t_sim *sim)
 {
 	pthread_mutex_destroy(&(sim->print_lock));
+	return (1);
 }
 
 int	main(int ac, char **av)
@@ -29,13 +30,10 @@ int	main(int ac, char **av)
 		return (1);
 	init_sim(&sim, philos);
 	init_philos(av, &sim, forks);
-	if (!thread_create(&sim, av, &monitor))
-	{
-		thread_join(&sim, av, monitor);
-		mutex_destroy(&sim);
-		return (1);
-	}
-	thread_join(&sim, av, monitor);
+	if (philo_create(&sim, av) < ft_atoi(av[1]))
+		return (mutex_destroy(&sim));
+	monitor_create(&sim, &monitor);
+	philo_join(&sim, av);
 	mutex_destroy(&sim);
 	return (0);
 }

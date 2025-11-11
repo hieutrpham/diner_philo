@@ -15,7 +15,7 @@
 void	init_sim(t_sim *sim, t_philo *philos)
 {
 	sim->status = ALIVE;
-	sim->begin = false;
+	sim->begin = 0;
 	pthread_mutex_init(&(sim->print_lock), NULL);
 	sim->philos = philos;
 }

@@ -26,6 +26,8 @@
 # define DEAD 1
 # define ALIVE 2
 # define DELAY 500
+# define BEGIN 1
+# define PANIC 2
 
 typedef struct s_sim	t_sim;
 typedef struct s_philo
@@ -51,7 +53,7 @@ typedef struct s_sim
 {
 	pthread_mutex_t		print_lock;
 	atomic_int			status;
-	atomic_bool			begin;
+	atomic_int			begin;
 	t_philo				*philos;
 }						t_sim;
 
@@ -60,14 +62,13 @@ int						ft_atoi(const char *nptr);
 size_t					ft_strlen(const char *s);
 void					*monitor_routine(void *arg);
 size_t					get_time(void);
-void					ft_usleep(size_t ms);
 void					print_mes(char *mes, t_philo *philo);
 void					*philo_routine(void *arg);
 void					init_sim(t_sim *sim, t_philo *philos);
 void					init_philos(char **av, t_sim *sim,
 							pthread_mutex_t *forks);
-bool					thread_create(t_sim *sim, char **av,
-							pthread_t *monitor);
-bool					thread_join(t_sim *sim, char **av, pthread_t monitor);
+int						philo_create(t_sim *sim, char **av);
+bool					philo_join(t_sim *sim, char **av);
 bool					stop_sim(t_philo *philo);
+bool					monitor_create(t_sim *sim, pthread_t *monitor);
 #endif // PHILO_H

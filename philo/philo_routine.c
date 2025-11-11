@@ -54,7 +54,7 @@ static void	eat(t_philo *philo)
 
 static void	think(t_philo *philo)
 {
-	int					delay;
+	int	delay;
 
 	print_mes("is thinking", philo);
 	if (stop_sim(philo))
@@ -84,8 +84,12 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	while (philo->sim->begin != true)
+	while (philo->sim->begin != BEGIN)
+	{
 		usleep(100);
+		if (philo->sim->begin == PANIC)
+			return (NULL);
+	}
 	print_mes("is thinking", philo);
 	if (philo->id % 2 == 0)
 		usleep(philo->time_to_eat * 1000 / 2);
@@ -97,11 +101,7 @@ void	*philo_routine(void *arg)
 	while (!stop_sim(philo))
 	{
 		eat(philo);
-		if (stop_sim(philo))
-			return (NULL);
 		sleeps(philo);
-		if (stop_sim(philo))
-			return (NULL);
 		think(philo);
 	}
 	return (NULL);

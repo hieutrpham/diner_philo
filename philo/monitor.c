@@ -72,6 +72,12 @@ void	*monitor_routine(void *arg)
 	t_philo	*philos;
 
 	philos = (t_philo *)arg;
+	while (philos->sim->begin != BEGIN)
+	{
+		usleep(100);
+		if (philos->sim->begin == PANIC)
+			return (NULL);
+	}
 	while (true)
 	{
 		if (has_dead_philo(philos) >= 0)
