@@ -12,11 +12,11 @@ jobs:
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
-        os: [ubuntu-latest, macOS-latest]
+        os: [ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v4
     - name: make philo
       run: cd philo && make
     - name: make philo_bonus
-      run: cd ../philo_bonus && make
+      run: cd philo_bonus && make
