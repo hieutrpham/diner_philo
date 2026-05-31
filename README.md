@@ -62,13 +62,11 @@ This produces the `philo_bonus` executable.
 
 The program prints timestamped state transitions such as:
 
-- `has taken a fork`
-- `is eating`
-- `is sleeping`
-- `is thinking`
-- `died`
-
-(Exact formatting depends on the implementation.)
+- `[timestamp][philo_id] has taken a fork`
+- `[timestamp][philo_id] is eating`
+- `[timestamp][philo_id] is sleeping`
+- `[timestamp][philo_id] is thinking`
+- `[timestamp][philo_id] died`
 
 ## Notes
 
@@ -78,7 +76,3 @@ The program prints timestamped state transitions such as:
 ## CI
 
 A GitHub Actions workflow is included at `.github/workflows/c-cpp.yml`.
-
-## License
-
-No license file is currently included in this repository.
