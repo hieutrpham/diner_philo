@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <bits/pthreadtypes.h>
 
 void	ft_sem_close(t_philo *philo, int sig)
 {
