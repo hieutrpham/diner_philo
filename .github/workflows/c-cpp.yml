@@ -19,4 +19,4 @@ jobs:
     - name: make philo
       run: cd philo && make
     - name: make philo_bonus
-      run: cd ../philo_bonus && make
+      run: cd philo_bonus && make
